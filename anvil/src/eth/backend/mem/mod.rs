@@ -1454,7 +1454,9 @@ impl Backend {
         if pending_nonce.is_some() {
             return Ok(pending_nonce.unwrap());
         }
-        self.with_database_at(block_request, |db, _| {
+        //TODO yhayun - create a new block_request for latest to not reuse the pending logic:
+        let latest_request = BlockRequest::Number(self.best_number());
+        self.with_database_at(Some(latest_request), |db, _| {
             trace!(target: "backend", "get nonce for {:?}", address);
             Ok(db.basic(address)?.unwrap_or_default().nonce.into())
         })
